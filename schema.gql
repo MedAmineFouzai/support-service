@@ -1,0 +1,51 @@
+
+
+
+
+type MutationRoot {
+	createThread(projectId: String!, title: String!, threadDescription: String!): Support!
+	deleteThread(threadId: String!): Support
+	sendMessage(threadId: String!, username: String!, text: String!): ID!
+}
+
+enum MutationType {
+	CREATED
+}
+
+type QueryRoot {
+	messages(threadId: ID!): [UserMessages!]
+	threads(projectId: ID!): [Support!]
+	thread(threadId: ID!): Support
+}
+
+type StreamChanged {
+	mutationType: MutationType!
+	id: ID!
+	userMessages: UserMessages
+}
+
+
+type SubscriptionRoot {
+	interval(n: Int! = 1): Int!
+	messages(mutationType: MutationType): StreamChanged!
+}
+
+type Support {
+	id: ID!
+	projectId: ID!
+	title: String!
+	threadDescription: String!
+	userMessages: [UserMessages!]!
+}
+
+type UserMessages {
+	id: String!
+	username: String!
+	text: String!
+}
+
+schema {
+	query: QueryRoot
+	mutation: MutationRoot
+	subscription: SubscriptionRoot
+}
